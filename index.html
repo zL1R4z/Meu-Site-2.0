@@ -1,108 +1,186 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
 <meta charset="UTF-8">
-<title>Filtro por Orçamento</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Filtro de Produtos</title>
 <style>
+  /* Estilo geral do corpo */
+  body {
+    font-family: "Poppins", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(145deg, #1d3557, #457b9d);
+    color: #f1faee;
+  }
 
-body{
-font-family: Arial;
-background:#f4f4f4;
-text-align:center;
-padding:40px;
-}
+  /* Container principal */
+  .container {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 700px; /* Ajuste dinamicamente o tamanho */
+    margin: 50px auto;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+  }
 
-.container{
-background:white;
-padding:30px;
-border-radius:10px;
-max-width:600px;
-margin:auto;
-box-shadow:0px 0px 10px rgba(0,0,0,0.1);
-}
+  /* Título */
+  h2 {
+    color: #1d3557;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+  }
 
-input{
-padding:10px;
-font-size:16px;
-width:200px;
-}
+  /* Parágrafo */
+  p {
+    color: #333333;
+    font-size: 18px;
+    margin: 10px 0 20px;
+    font-weight: 500;
+  }
 
-button{
-padding:10px 20px;
-font-size:16px;
-margin-left:10px;
-cursor:pointer;
-}
+  /* Input para valor */
+  input {
+    padding: 12px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 300px;
+    margin: 10px 0;
+    border: 2px solid #ced4da;
+    border-radius: 8px;
+    box-sizing: border-box;
+    outline: none;
+    transition: all 0.3s ease;
+  }
 
-.produto{
-border-bottom:1px solid #ddd;
-padding:10px;
-}
+  input:focus {
+    border-color: #457b9d;
+    box-shadow: 0 0 5px rgba(69, 123, 189, 0.5);
+  }
 
+  /* Botão de buscar */
+  button {
+    padding: 12px 30px;
+    font-size: 16px;
+    border-radius: 8px;
+    background: #457b9d;
+    color: #fff;
+    border: none;
+    font-weight: bold;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  button:hover {
+    background: #1d3557;
+    transform: scale(1.05);
+  }
+
+  /* Estilo para os produtos */
+  .produto {
+    border-bottom: 1px solid #eee;
+    padding: 15px;
+    margin: 10px 0;
+    text-align: left;
+    border-radius: 8px;
+    background: #f8f9fa;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .produto:last-child {
+    border: none;
+  }
+
+  /* Nome do produto */
+  .produto b {
+    color: #457b9d;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  /* Link do produto */
+  .produto a {
+    text-decoration: none;
+    color: #1d3557;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  .produto a:hover {
+    color: #457b9d;
+    text-decoration: underline;
+  }
+
+  /* Mensagem de valor não encontrado */
+  .no-results {
+    font-size: 16px;
+    font-weight: 500;
+    color: #dc3545;
+    margin-top: 10px;
+  }
+
+  /* Resultado */
+  #resultado {
+    margin-top: 30px;
+  }
 </style>
 </head>
 
 <body>
-
 <div class="container">
-
-<h2>Filtro de Produtos</h2>
-
-<p>Eu posso gastar até:</p>
-
-<input type="number" id="valor" placeholder="R$">
-<button onclick="filtrar()">Buscar</button>
-
-<div id="resultado"></div>
-
+  <h2>Filtro de Produtos</h2>
+  <p>Informe o valor máximo que deseja gastar e veja os produtos disponíveis:</p>
+  <!-- Input para capturar valor -->
+  <input type="number" id="valor" placeholder="Ex.: 500" oninput="filtrar()">
+  <div id="resultado"></div>
 </div>
 
 <script>
+  const produtos = [
+    { nome: "Bateria IPhone 11", preco: 399.99, link: "https://www.instagram.com/mymagicstoresousa?igsh=eGRwc3F5eWxhZWYw" },
+    { nome: "Cabo Santo Ângelo", preco: 68.82, link: "https://www.mercadolivre.com.br/p/MLB23157657" },
+    { nome: "iPhone 16", preco: 4775.99, link: "https://www.amazon.com.br/Apple-iPhone-16-128-GB/dp/B0DJFTJ6LX" },
+    { nome: "iPhone 16 Pro", preco: 6119.99, link: "https://www.instagram.com/jv_imports_" },
+    { nome: "iPhone 17", preco: 6667.99, link: "https://www.instagram.com/jv_imports_" },
+    { nome: "Kit violão", preco: 1993.99, link: "https://www.mercadolivre.com.br/up/MLBU3704300010" },
+    { nome: "Mochila Executiva Grande", preco: 110.31, link: "https://produto.mercadolivre.com.br/MLB-3898735809" },
+    { nome: "Tapa Olho", preco: 21.66, link: "https://www.mercadolivre.com.br/p/MLB52127724" },
+  ];
 
-const produtos = [
-{nome:"iPhone 16", preco:4775.99, link:"https://www.amazon.com.br/Apple-iPhone-16-128-GB/dp/B0DJFTJ6LX/ref=sr_1_2?sr=8-2"},
-{nome:"iPhone 16 Pro", preco:6119.99, link:"https://www.instagram.com/jv_imports_?igsh=ZWQxandqdnF0OWNr"},
-{nome:"iPhone 17", preco:6667.99, link:"https://www.instagram.com/jv_imports_?igsh=ZWQxandqdnF0OWNr"},
-{nome:"iPhone 17 Pro", preco:9371.99, link:"https://www.instagram.com/juy_cell?igsh=eXp4azk0dGxmeDN4"},
-{nome:"Tapa Olho", preco:21.66, link:"https://www.mercadolivre.com.br/p/MLB52127724?pdp_filters=item_id:MLB5710574304&matt_tool=38524122#origin=share&sid=share&wid=MLB5710574304&action=copy"},
-{nome:"Bateria IPhone 11", preco:399.99, link:"https://www.instagram.com/mymagicstoresousa?igsh=eGRwc3F5eWxhZWYw"},
-{nome:"Mochila 50L", preco:128.15, link:"https://produto.mercadolivre.com.br/MLB-4136051377?matt_tool=38524122#origin=share&sid=share&action=copy"},
-{nome:"Mochila Executiva Grande", preco:110.31, link:"https://produto.mercadolivre.com.br/MLB-3898735809?attributes=FABRIC_DESIGN:TGlzbw==,COLOR_SECONDARY_COLOR:UHJldG8=&matt_tool=38524122#origin=share&sid=share&action=copy"},
-{nome:"Mala Viagem", preco:474.90, link:"https://www.mercadolivre.com.br/up/MLBU2979674904?pdp_filters=item_id:MLB3958702249&matt_tool=38524122#origin=share&sid=share&wid=MLB3958702249&action=copy"},
-{nome:"S24 Ultra", preco:5498.99, link:"https://www.amazon.com.br/Smartphone-Samsung-Galaxy-Selfie-1-120Hz/dp/B0CQD9VK7X/ref=sr_1_5?sr=8-5"},
-{nome:"S25 Ultra", preco:6420.99, link:"https://shop.samsung.com/br/galaxy-s25-ultra/p"},
-{nome:"Kit violão", preco:1993.99, link:"https://www.mercadolivre.com.br/up/MLBU3704300010?pdp_filters=item_id:MLB6100449460&matt_tool=38524122#origin=share&sid=share&wid=MLB6100449460&action=copy"},
-{nome:"Cabo Santo Ângelo", preco:68.82, link:"https://www.mercadolivre.com.br/p/MLB23157657?pdp_filters=item_id:MLB4057121218&matt_tool=38524122#origin=share&sid=share&wid=MLB4057121218&action=copy"},
-{nome:"Mi Box S Tv Box", preco:417.09, link:"https://www.mercadolivre.com.br/up/MLBU3439088838?pdp_filters=item_id:MLB5613295472&matt_tool=38524122#origin=share&sid=share&wid=MLB5613295472&action=copy"}
-];
+  // Função para filtrar produtos
+  function filtrar() {
+    const valorMax = parseFloat(document.getElementById("valor").value);
+    const resultado = document.getElementById("resultado");
 
-function filtrar(){
+    // Inicializa HTML
+    resultado.innerHTML = "";
 
-let valor = document.getElementById("valor").value;
-let resultado = document.getElementById("resultado");
+    // Realiza filtragem nos resultados
+    const produtosFiltrados = produtos
+      .sort((a, b) => a.nome.localeCompare(b.nome)) // Ordena em ordem alfabética
+      .filter(produto => produto.preco <= valorMax);
 
-resultado.innerHTML = "";
-
-produtos.forEach(produto => {
-
-if(produto.preco <= valor){
-
-resultado.innerHTML += `
-<div class="produto">
-<b>${produto.nome}</b><br>
-Preço: R$ ${produto.preco}<br>
-<a href="${produto.link}" target="_blank">Ver oferta</a>
-</div>
-`;
-
-}
-
-});
-
-}
-
+    // Cria os itens dos produtos ou retorna mensagem de nenhum resultado
+    if (produtosFiltrados.length) {
+      produtosFiltrados.forEach(produto => {
+        resultado.innerHTML += `
+          <div class="produto">
+            <b>${produto.nome}</b><br>
+            Preço: R$ ${produto.preco.toFixed(2).replace(".", ",")}<br>
+            <a href="${produto.link}" target="_blank">Ver oferta</a>
+          </div>`;
+      });
+    } else {
+      resultado.innerHTML = '<p class="no-results">Nenhum produto encontrado para o valor especificado.</p>';
+    }
+  }
 </script>
-
 </body>
+
 </html>
